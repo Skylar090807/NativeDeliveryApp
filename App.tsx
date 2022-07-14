@@ -76,6 +76,7 @@ function App() {
         <Stack.Screen>은 화면을 그리는 page 단위이다. (혹은 page 보다 조금 더 작은 단위.)
     */
     <NavigationContainer>
+      {/* Screen을 Grouping 하는 컴포넌트에서는 creenOptions={{}}, Screen 컴포넌트에서는 options로 option props를 사용한다. */}
       <Stack.Navigator initialRouteName="Home" screenOptions={{}}>
         {/*  */}
         {/* 일반적인 <Stack.Screen> 사용법은 "Home" 과 같다. */}
