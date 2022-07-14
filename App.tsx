@@ -15,8 +15,14 @@ import { useCallback } from 'react'
 
 /*
     React Navigation Typing
-
-
+      공식문서 https://reactnavigation.org/docs/typescript/
+    타입을 확인하는 방법은 공식 문서를 참조하거나 하나씩 따라 들어가 봐야 하는 번거로움이 있다. React Navigation Type은 제작자가 정한 것이기 때문에 유추하기 힘들다.
+      - NativeStackScreenProps (Cmd + Click)처럼 코드를 열어서 확인해야 한다.
+        - ex) Cmd + Click으로 따라들어가 확인. node_module/@react-navigation/native-stack/lib/typescript/src/types.d.ts
+          export declare type NativeStackScreenProps<ParamList extends ParamListBase, RouteName extends keyof ParamList = string, NavigatorID extends string | undefined = undefined> = {
+            navigation: NativeStackNavigationProp<ParamList, RouteName, NavigatorID>;
+            route: RouteProp<ParamList, RouteName>;
+          }; 
  */
 type RootStackParamList = {
   Home: undefined
@@ -169,7 +175,6 @@ function App() {
 
         {/* <Stack.Screen>을 "Details"처럼 잘 사용하진 않지만 화면이 전환되면서 꼭 넘겨야 할 props가 있다면 아래 처럼 사용할 수도 있다. 
             "Home" screen과 "Details"가 정의된 모습은 같다. 다만 "Home"은 라이브러리에서 정의된 type이 auto link 된 것이고, "Details"는 수동으로 정의한 것.
-
         */}
         <Stack.Screen name="Details" options={{ title: '상세 페이지' }}>
           {(props: {
