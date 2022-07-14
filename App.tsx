@@ -1,6 +1,11 @@
+// TypeScript는 작은 개념으로는 JavaScript의 parameter(매개변수), return value(리턴 값), variable(변수)에 Typing 한 것.
 import 'react-native-gesture-handler'
 import * as React from 'react'
-import { NavigationContainer, ParamListBase } from '@react-navigation/native'
+import {
+  NavigationContainer,
+  ParamListBase,
+  RouteProp,
+} from '@react-navigation/native'
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
@@ -8,6 +13,11 @@ import {
 import { Pressable, Text, TouchableHighlight, View } from 'react-native'
 import { useCallback } from 'react'
 
+/*
+    React Navigation Typing
+
+
+ */
 type RootStackParamList = {
   Home: undefined
   Details: undefined
@@ -15,7 +25,11 @@ type RootStackParamList = {
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>
 type DetailsScreenProps = NativeStackScreenProps<ParamListBase, 'Details'>
 
-// TypeScript는 작은 개념으로는 JavaScript의 parameter(매개변수), return value(리턴 값), variable(변수)에 Typing 한 것.
+/*
+    Navigator는 navigation과 route를 prop으로 가지고 있다.
+    화면 전환을 위해 navigation prop을 param으로 받는다.
+    navigation.navigate()함수를 사용해 function App에서 선언한 Stack.Screen의 name prop을 넣으면 해당 Screen으로 이동한다.
+*/
 function HomeScreen({ navigation }: HomeScreenProps) {
   const onClick = useCallback(() => {
     navigation.navigate('Details')
@@ -29,7 +43,7 @@ function HomeScreen({ navigation }: HomeScreenProps) {
         flex-direction은 column이 default이다.
         - 웹과 같이 flex-direction: column일 때 justify-content = column 정렬, align-items = row 정렬이 된다.
         각 컴포넌트에서 적용 가능한 style은 Cmd+ Click으로 따라가서 보면 된다.
-        - ex) View 컴포넌트의 경우 style (Cmd+ Click) -> node_module/@types/react-native/index.d.ts파일 <ViewStyle>(Cmd+ Click)
+          - ex) View 컴포넌트의 경우 style (Cmd+ Click) -> node_module/@types/react-native/index.d.ts파일 <ViewStyle>(Cmd+ Click)
         React Native에서 style 상속
         - 큰 특을 웹과 비슷하나, Text의 경우 Text의 부모 View에서 Color를 줘도 상속되지 않는다.
         - Text 관련 Style은 Text에 따로 줘야 한다. 자세한 style은 Cmd+ Click으로 따라가서 보면 된다.
@@ -153,9 +167,15 @@ function App() {
           options={{ title: '홈', headerShown: true }}
         />
 
-        {/* <Stack.Screen>을 "Details"처럼 잘 사용하진 않지만 화면이 전환되면서 꼭 넘겨야 할 props가 있다면 아래 처럼 사용할 수도 있다. */}
+        {/* <Stack.Screen>을 "Details"처럼 잘 사용하진 않지만 화면이 전환되면서 꼭 넘겨야 할 props가 있다면 아래 처럼 사용할 수도 있다. 
+            "Home" screen과 "Details"가 정의된 모습은 같다. 다만 "Home"은 라이브러리에서 정의된 type이 auto link 된 것이고, "Details"는 수동으로 정의한 것.
+
+        */}
         <Stack.Screen name="Details" options={{ title: '상세 페이지' }}>
-          {(props: any) => <DetailsScreen {...props} />}
+          {(props: {
+            route: RouteProp<ParamListBase, 'Details'>
+            navigation: any
+          }) => <DetailsScreen {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
