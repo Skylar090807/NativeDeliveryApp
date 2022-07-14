@@ -44,6 +44,7 @@ function DetailsScreen({ navigation }: DetailsScreenProps) {
 }
 
 const Stack = createNativeStackNavigator()
+
 function App() {
   return (
     <NavigationContainer>
