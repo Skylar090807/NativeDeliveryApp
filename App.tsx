@@ -24,10 +24,17 @@ import { useCallback } from 'react'
             route: RouteProp<ParamList, RouteName>;
           }; 
  */
+
+/*
+    Navigation List (Pages 목록)
+    해당 page에서 따로 넘길 param이 없으면 undefined를 할당한다.
+*/
 type RootStackParamList = {
   Home: undefined
   Details: undefined
 }
+
+// type RootStackParamList에 선언한 param 연결.
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>
 type DetailsScreenProps = NativeStackScreenProps<ParamListBase, 'Details'>
 
@@ -36,6 +43,7 @@ type DetailsScreenProps = NativeStackScreenProps<ParamListBase, 'Details'>
     화면 전환을 위해 navigation prop을 param으로 받는다.
     navigation.navigate()함수를 사용해 function App에서 선언한 Stack.Screen의 name prop을 넣으면 해당 Screen으로 이동한다.
 */
+// param을 연결한 type HomeScreenProps을 해당 Screen에 type으로 준다.
 function HomeScreen({ navigation }: HomeScreenProps) {
   const onClick = useCallback(() => {
     navigation.navigate('Details')
