@@ -1,12 +1,12 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 
-function SignUp() {
+function Complete() {
   return (
     <View>
-      <Text>회원가입</Text>
+      <Text>완료</Text>
     </View>
   )
 }
 
-export default SignUp
+export default Complete
