@@ -34,6 +34,7 @@ function SignIn({ navigation }: SignInScreenProps) {
     if (!password || !password.trim()) {
       return Alert.alert('비밀번호를 입력해주세요.')
     }
+    Alert.alert('로그인 되었습니다.')
   }, [email, password])
 
   const toSignUp = useCallback(() => {
@@ -71,7 +72,7 @@ function SignIn({ navigation }: SignInScreenProps) {
           value={password}
           placeholder="비밀번호를 입력하세요."
           onChangeText={onChangePassword}
-          style={styles.textInput}
+          style={[styles.textInput, styles.passwordInput]}
           secureTextEntry
           importantForAutofill="yes"
           autoComplete="password"
@@ -141,6 +142,9 @@ const styles = StyleSheet.create({
   textInput: {
     padding: 5,
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  passwordInput: {
+    marginBottom: 100,
   },
 })
 
