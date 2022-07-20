@@ -12,7 +12,6 @@ import {
 import { TextInput } from 'react-native-gesture-handler'
 import { RootStackParamList } from '../../App'
 import DismissKeyboardView from '../components/DismissKeyboardView'
-// import DismissKeyboardView from '../components/DismissKeyboardView'
 
 type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>
 
