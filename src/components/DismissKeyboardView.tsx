@@ -6,7 +6,6 @@ import {
   ViewStyle,
 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-// react-native-keyboard-aware-scroll-view는 JavaScript로 type 지원이 안 된다.
 
 // TextInput 외 빈 곳을 터치하면 keyboard가 내려가도록 만든다.
 // children을 prop으로 받아 올 땐 React.FC 형태를 쓰는 것이 좋다.
