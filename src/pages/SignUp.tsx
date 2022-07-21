@@ -82,11 +82,12 @@ function SignUp({ navigation }: SignUpScreenProps) {
         // '127.0.0.1:3105/user',
         // 'localhost:3105/user',
         // '내아이피/user',
-        '10.0.2.2:3105/user',
+        // 10.0.2.2 android emulator 내부 주소, iOS는 localhost:3105
+        '127.0.0.1:3105/user',
         {
           email,
           name,
-          password,
+          password, // hash화, 비밀번호는 보통 일방향 암호화. 암호화는 가능하지만 복호화는 불가능하다.
         },
         // config에 headers를 요청, 같은 사용자가 얼마나 여러번 터치했는지 체크하는 안전장치를 만들 수 있다. 서버 개발자와 상의해서 인공지능 robot 등이 여러번 클릭하지 못하도록 클라이언트에서도 한 번 더 처리할 수 있다.
         // {
@@ -97,6 +98,7 @@ function SignUp({ navigation }: SignUpScreenProps) {
       )
       console.log(response.data)
       Alert.alert('알림', '가입 되었습니다.')
+      navigation.navigate('SignIn')
     } catch (error) {
       // error는 unknown이다. typescript에서 쓸 때는 (error as AxiosError)라고 해줘야 한다.
       // 변수에 (error as AxiosError)를 담아 가독성, 사용성을 높인다.
@@ -111,8 +113,7 @@ function SignUp({ navigation }: SignUpScreenProps) {
     }
 
     console.log(email, name, password)
-    Alert.alert('알림', '회원가입 되었습니다.')
-  }, [loading, email, name, password])
+  }, [navigation, loading, email, name, password])
 
   const canGoNext = email && name && password
   return (
