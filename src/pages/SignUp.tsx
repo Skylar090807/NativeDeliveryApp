@@ -14,6 +14,8 @@ import {
 import { TextInput } from 'react-native-gesture-handler'
 import { RootStackParamList } from '../../AppInner'
 import DismissKeyboardView from '../components/DismissKeyboardView'
+// react-native-config 라이브러리 사용 시
+// import Config from 'react-native-config'
 
 type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>
 
@@ -78,16 +80,19 @@ function SignUp({ navigation }: SignUpScreenProps) {
         // }/user`,
         // `${__DEV__ ? 'localhost:3105' : '운영서버주소'}/user`,
 
+        // react-native-config 라이브러리 사용 시
+        // `${Config.API_URL}/user`,
+
         // localhost 주소 부르는 방법
         // '127.0.0.1:3105/user',
         // 'localhost:3105/user',
         // '내아이피/user',
         // 10.0.2.2 android emulator 내부 주소, iOS는 localhost:3105
-        '127.0.0.1:3105/user',
+        'http://10.0.2.2:3105/user',
         {
           email,
-          name,
           password, // hash화, 비밀번호는 보통 일방향 암호화. 암호화는 가능하지만 복호화는 불가능하다.
+          name,
         },
         // config에 headers를 요청, 같은 사용자가 얼마나 여러번 터치했는지 체크하는 안전장치를 만들 수 있다. 서버 개발자와 상의해서 인공지능 robot 등이 여러번 클릭하지 못하도록 클라이언트에서도 한 번 더 처리할 수 있다.
         // {
@@ -106,7 +111,7 @@ function SignUp({ navigation }: SignUpScreenProps) {
       const errorResponse = (error as AxiosError).response
       console.error(errorResponse)
       if (errorResponse) {
-        Alert.alert('알림', errorResponse.data.message)
+        Alert.alert('알림', (errorResponse.data as any).message)
       }
     } finally {
       setLoading(false)
