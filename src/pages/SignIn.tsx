@@ -58,12 +58,17 @@ function SignIn({ navigation }: SignInScreenProps) {
       console.log(response.data)
       Alert.alert('알림', '로그인 되었습니다.')
       dispatch(
+        // userSlice.actions.setUser({})의 action
         userSlice.actions.setUser({
           name: response.data.data.name,
           email: response.data.data.email,
           accessToken: response.data.data.accessToken,
+          refreshToken: response.data.data.refreshToken,
         }),
       )
+      // 바꿀 state가 하나일 때 action에서 객체가 아닌 data 값을 바로 던지는 예시.
+      dispatch(userSlice.actions.setName(response.data.data.name))
+
       // await EncryptedStorage.setItem(
       //   'refreshToken',
       //   response.data.data.refreshToken,
