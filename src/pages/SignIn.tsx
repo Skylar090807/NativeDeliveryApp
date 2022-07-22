@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native'
+import EncryptedStorage from 'react-native-encrypted-storage'
 import { RootStackParamList } from '../../AppInner'
 import userSlice from '../slices/user'
 import { useAppDispatch } from '../store'
@@ -62,17 +63,30 @@ function SignIn({ navigation }: SignInScreenProps) {
         userSlice.actions.setUser({
           name: response.data.data.name,
           email: response.data.data.email,
+          /*
+            accessToken과 refreshToken
+              accessToken에는 유효기간을 둔다. 지정된 시간이 지나면 로그아웃 된다. 유효기간: 5분~ 1시간
+              시간을 연장할 때 refreshToken을 서버로 보내준다. 서버는 다시 accessToken을 보내준다. 유효기간: 1일 ~ 30일
+              accessToken과 refreshToken 동시에 모두 탈취되는 사태가 발생하지 않도록 각각 다른 곳에 저장한다.
+                - ex) 
+          */
           accessToken: response.data.data.accessToken,
-          refreshToken: response.data.data.refreshToken,
         }),
       )
       // 바꿀 state가 하나일 때 action에서 객체가 아닌 data 값을 바로 던지는 예시.
       dispatch(userSlice.actions.setName(response.data.data.name))
 
-      // await EncryptedStorage.setItem(
-      //   'refreshToken',
-      //   response.data.data.refreshToken,
-      // )
+      // refreshToken EncryptedStorage에 저장.
+      /*
+        EncryptedStorage 사용법 (Promise 문법으로 사용한다)
+        await EncryptedStorage.setItem('키', '값');
+        await EncryptedStorage.removeItem('키');
+        const 값 = await EncryptedStorage.getItem('키');
+      */
+      await EncryptedStorage.setItem(
+        'refreshToken',
+        response.data.data.refreshToken,
+      )
     } catch (error) {
       const errorResponse = (error as AxiosError).response
       if (errorResponse) {
