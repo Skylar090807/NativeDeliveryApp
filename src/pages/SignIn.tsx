@@ -1,6 +1,8 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import axios, { AxiosError } from 'axios'
 import React, { useCallback, useRef, useState } from 'react'
 import {
+  ActivityIndicator,
   Alert,
   Pressable,
   StyleSheet,
@@ -8,11 +10,16 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import { RootStackParamList } from '../../App'
+import { RootStackParamList } from '../../AppInner'
+import userSlice from '../slices/user'
+import { useAppDispatch } from '../store'
 
 type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>
 
 function SignIn({ navigation }: SignInScreenProps) {
+  const dispatch = useAppDispatch()
+  const [loading, setLoading] = useState(false)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   //ref는 기본적으로 null이 들어갈 수 있다. undefined를 넣을 수도 있다.
@@ -26,7 +33,7 @@ function SignIn({ navigation }: SignInScreenProps) {
     setPassword(text)
   }, [])
 
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback(async () => {
     // trim() 좌우공백 제거
     if (!email || !email.trim()) {
       return Alert.alert('이메일을 입력해주세요.')
@@ -34,8 +41,42 @@ function SignIn({ navigation }: SignInScreenProps) {
     if (!password || !password.trim()) {
       return Alert.alert('비밀번호를 입력해주세요.')
     }
-    Alert.alert('로그인 되었습니다.')
-  }, [email, password])
+    /*
+       로그인시 서버로 인증 토큰을 요청하면 서버에서 토큰을 보내준다.
+       서버에서 받은 토큰을 저장해야한다. redux 스토어 같은 곳에 저장하면 rem과 같기 때문에 App을 끄면 날아가버린다.
+       Native App 에서는 localStorage와 비슷한 개념인 RN의 기본 제공 AsyncStorage를 사용할 수 있으나, AsyncStorage는 암호화되지 않아 누구나 열어볼 수 있다.
+       AsyncStorage에 토큰을 담아주면 위험하다. 보안에 민감하지 않으나 계속 유지되어야 하는 데이터를 담는 것은 괜찮다. 
+       보안에 민감한 데이터들은 react-native-encrypted-storage 라이브러리를 사용한다. 
+    */
+    //  Axios API 서버 호출
+    try {
+      setLoading(true)
+      const response = await axios.post('http://10.0.2.2:3105/login', {
+        email,
+        password,
+      })
+      console.log(response.data)
+      Alert.alert('알림', '로그인 되었습니다.')
+      dispatch(
+        userSlice.actions.setUser({
+          name: response.data.data.name,
+          email: response.data.data.email,
+          accessToken: response.data.data.accessToken,
+        }),
+      )
+      // await EncryptedStorage.setItem(
+      //   'refreshToken',
+      //   response.data.data.refreshToken,
+      // )
+    } catch (error) {
+      const errorResponse = (error as AxiosError).response
+      if (errorResponse) {
+        Alert.alert('알림', (errorResponse.data as any).message)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }, [loading, dispatch, email, password])
 
   const toSignUp = useCallback(() => {
     navigation.navigate('SignUp')
@@ -99,7 +140,11 @@ function SignIn({ navigation }: SignInScreenProps) {
           // disabled={!email || !password}
           disabled={!canGoNext}
         >
-          <Text style={styles.loginButtonText}>로그인</Text>
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text style={styles.loginButtonText}>로그인</Text>
+          )}
         </Pressable>
         <Pressable onPress={toSignUp} style={styles.loginButton}>
           <Text style={styles.loginButtonText}>회원가입</Text>
