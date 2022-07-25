@@ -12,6 +12,11 @@ import SignUp from './src/pages/SignUp'
 import { RootState } from './src/store/reducer'
 import { useSelector } from 'react-redux'
 import useSocket from './src/hook/useSocket'
+import EncryptedStorage from 'react-native-encrypted-storage'
+import axios, { AxiosError } from 'axios'
+import { useAppDispatch } from './src/store'
+import userSlice from './src/slices/user'
+import { Alert } from 'react-native'
 
 /* 
   TypeScript에서 React Navigation을 사용하려면 아래와 같이 Type Check를 해야 한다.
@@ -37,11 +42,13 @@ const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
 
 function AppInner() {
+  const dispatch = useAppDispatch()
   /* 
     Redux useSelector
     Redux useSelector는 항상 Provider 안에서만 쓸 수 있다. 
     바깥에 useSelector를 선언해서 쓰고 싶다면 자식 컴포넌트들을 하나의 컴포넌트로 분리한 후 Provider 안쪽에서 분리한 컴포넌트를 불러준다.
   */
+  // email이 있으면 login상태로 본다.
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email)
 
   // Socket.IO 사용하기
@@ -61,21 +68,21 @@ function AppInner() {
   //Socket.IO helloCallback으로 emit, on, off 연습해보기
   useEffect(() => {
     // server로 부터 데이터를 받는 것은 callback 방식으로 처리를 해야 한다.
-    const helloCallback = (data: any) => {
+    const callback = (data: any) => {
       // 백엔드 쪽에서 data를 요청 받으면 1초마다 emit이라고 보내도록 되어있다.
-      console.log('helloCallback', data)
+      console.log('callback', data)
       console.log('error', data?.io?.$error?.[0])
     }
     if (socket && isLoggedIn) {
       console.log(socket)
       // socket.emit 보낼 때 login을 해야만 hello를 받을 수 있다.
-      socket.emit('login', 'hello')
-      socket.on('hello', helloCallback)
+      socket.emit('acceptOrder', 'hello')
+      socket.on('order', callback)
     }
-    // useEffect의 return은 clean Up
+    // useEffect의 return은 clean up. on -> off
     return () => {
       if (socket) {
-        socket.off('hello', helloCallback)
+        socket.off('order', callback)
       }
     }
   }, [isLoggedIn, socket])
@@ -87,6 +94,82 @@ function AppInner() {
       disconnect()
     }
   }, [isLoggedIn, disconnect])
+
+  /*
+    앱 실행 시 토큰이 있으면 로그인 유지하는 코드
+  */
+  useEffect(() => {
+    // useEffect()는 async를 사용할 수 없으므로 내부에서 async 함수를 만들어 처리한다.
+    const getTokenAndRefresh = async () => {
+      try {
+        const token = await EncryptedStorage.getItem('refreshToken')
+        if (!token) {
+          return
+        }
+        const response = await axios.post(
+          'http://10.0.2.2:3105/refreshToken',
+          {},
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        dispatch(
+          userSlice.actions.setUser({
+            name: response.data.data.name,
+            email: response.data.data.email,
+            accessToken: response.data.data.accessToken,
+          }),
+        )
+      } catch (error) {
+        console.error(error)
+        if ((error as AxiosError).response?.data.code === 'expired') {
+          Alert.alert('알림', '다시 로그인 해주세요.')
+        }
+      } finally {
+        // TODO: splash screen 종료
+      }
+    }
+    getTokenAndRefresh()
+
+    /*
+      deps에 추가된 dispatch는 불변성을 유지하기 때문에 추가하든 추가하지 않든 같은 의미를 가진다.
+      그럼에도 추가한 것은 eslint가 오류로 인식하기 때문이다.
+    */
+  }, [dispatch])
+
+  useEffect(() => {
+    axios.interceptors.response.use(
+      response => {
+        return response
+      },
+      async error => {
+        const {
+          config,
+          response: { status },
+        } = error
+        if (status === 419) {
+          if (error.response.data.code === 'expired') {
+            const originalRequest = config
+            const refreshToken = await EncryptedStorage.getItem('refreshToken')
+            // token refresh 요청
+            const { data } = await axios.post(
+              'http://10.0.2.2:3105/refreshToken', // token refresh api
+              {},
+              { headers: { authorization: `Bearer ${refreshToken}` } },
+            )
+            // 새로운 토큰 저장
+            dispatch(userSlice.actions.setAccessToken(data.data.accessToken))
+            originalRequest.headers.authorization = `Bearer ${data.data.accessToken}`
+            // 419로 요청 실패했던 요청 새로운 토큰으로 재요청
+            return axios(originalRequest)
+          }
+        }
+        return Promise.reject(error)
+      },
+    )
+  }, [dispatch])
 
   return isLoggedIn ? (
     <Tab.Navigator>
