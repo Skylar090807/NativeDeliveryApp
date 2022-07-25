@@ -7,15 +7,19 @@ let socket: Socket | undefined
 
 /*
   typing [Socket | undefined, () => void]에 대한 설명
-  
+  param socket과 함수인 disconnect param의 typing이다.
+  첫번째 param
 */
 const useSocket = (): [typeof socket, () => void] => {
+  //socket 연결 끊는 함수
   const disconnect = useCallback(() => {
     if (socket) {
       socket.disconnect()
       socket = undefined
     }
   }, [])
+
+  //socket이 없을 때만 연결하는 로직
   if (!socket) {
     /*
       io('서버주소', {option})
