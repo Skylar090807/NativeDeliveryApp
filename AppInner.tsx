@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler'
 import * as React from 'react'
+import { useEffect } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Settings from './src/pages/Settings'
@@ -10,6 +11,7 @@ import SignUp from './src/pages/SignUp'
 
 import { RootState } from './src/store/reducer'
 import { useSelector } from 'react-redux'
+import useSocket from './src/hook/useSocket'
 
 /* 
   TypeScript에서 React Navigation을 사용하려면 아래와 같이 Type Check를 해야 한다.
@@ -41,6 +43,50 @@ function AppInner() {
     바깥에 useSelector를 선언해서 쓰고 싶다면 자식 컴포넌트들을 하나의 컴포넌트로 분리한 후 Provider 안쪽에서 분리한 컴포넌트를 불러준다.
   */
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email)
+
+  // Socket.IO 사용하기
+  /*
+    Socket.IO에서는 데이터를 key: value 형태로 주고 받는다.
+      예시)'hello', 'world'
+          'userInfo', { name: 'Skylar', birth: 1989 }
+          'order', { orderId: '0001s', price: 3000, latitude: 37.5, longtitude: 127.5 }
+  */
+  /*
+    socket.emit : socket으로 서버에 데이터를 보낸다.
+    socket.on : socket으로 서버로부터 데이터를 받는다.
+    socket.off : socket으로 서버에서 데이터 받는 것 중단. 
+ */
+  const [socket, disconnect] = useSocket()
+
+  //Socket.IO helloCallback으로 emit, on, off 연습해보기
+  useEffect(() => {
+    // server로 부터 데이터를 받는 것은 callback 방식으로 처리를 해야 한다.
+    const helloCallback = (data: any) => {
+      // 백엔드 쪽에서 data를 요청 받으면 1초마다 emit이라고 보내도록 되어있다.
+      console.log('helloCallback', data)
+      console.log('error', data?.io?.$error?.[0])
+    }
+    if (socket && isLoggedIn) {
+      console.log(socket)
+      // socket.emit 보낼 때 login을 해야만 hello를 받을 수 있다.
+      socket.emit('login', 'hello')
+      socket.on('hello', helloCallback)
+    }
+    // useEffect의 return은 clean Up
+    return () => {
+      if (socket) {
+        socket.off('hello', helloCallback)
+      }
+    }
+  }, [isLoggedIn, socket])
+
+  // logout을 터치하면 Socket.IO disconnect.
+  useEffect(() => {
+    if (!isLoggedIn) {
+      console.log('!isLoggedIn', !isLoggedIn)
+      disconnect()
+    }
+  }, [isLoggedIn, disconnect])
 
   return isLoggedIn ? (
     <Tab.Navigator>

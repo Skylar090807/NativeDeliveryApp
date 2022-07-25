@@ -1,4 +1,4 @@
-// Socket.IO 사용을 위한 커스텀 훅
+// Socket.IO 사용을 위한 커스텀 훅 (Socket.IO 연결)
 import { useCallback } from 'react'
 import { io, Socket } from 'socket.io-client'
 
