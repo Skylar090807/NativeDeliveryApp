@@ -17,6 +17,7 @@ import axios, { AxiosError } from 'axios'
 import { useAppDispatch } from './src/store'
 import userSlice from './src/slices/user'
 import { Alert } from 'react-native'
+import orderSlice from './src/slices/order'
 
 /* 
   TypeScript에서 React Navigation을 사용하려면 아래와 같이 Type Check를 해야 한다.
@@ -72,6 +73,7 @@ function AppInner() {
       // 백엔드 쪽에서 data를 요청 받으면 1초마다 emit이라고 보내도록 되어있다.
       console.log('callback', data)
       console.log('error', data?.io?.$error?.[0])
+      dispatch(orderSlice.actions.addOrder(data))
     }
     if (socket && isLoggedIn) {
       console.log(socket)
@@ -85,7 +87,7 @@ function AppInner() {
         socket.off('order', callback)
       }
     }
-  }, [isLoggedIn, socket])
+  }, [dispatch, isLoggedIn, socket])
 
   // logout을 터치하면 Socket.IO disconnect.
   useEffect(() => {

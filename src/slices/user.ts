@@ -49,13 +49,9 @@ const userSlice = createSlice({
       state.name = action.payload.name
       state.accessToken = action.payload.accessToken
     },
-    // 만약 name 관련 state만 바꾸고 싶다면 setName(){}으로 아래와 같이 작성할 수 있다.
-    setName(state, action) {
-      state.name = action.payload
-    },
-    // setEmail(){}
-    setEmail(state, action) {
-      state.email = action.payload
+    // 만약 accessToken 관련 state만 바꾸고 싶다면 setAccessToken(){}으로 아래와 같이 작성할 수 있다.
+    setAccessToken(state, action) {
+      state.accessToken = action.payload
     },
   },
   // extraReducers에는 비동기 action
