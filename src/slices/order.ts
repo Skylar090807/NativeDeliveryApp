@@ -12,6 +12,11 @@ export interface Order {
   }
   price: number
 }
+
+/*
+  orders: 서버에서 가져오는 주문 list
+  deliveries: orders 중 수락한 주문 list
+*/
 interface InitialState {
   orders: Order[]
   deliveries: Order[]
