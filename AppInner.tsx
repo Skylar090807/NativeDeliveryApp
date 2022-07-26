@@ -141,6 +141,9 @@ function AppInner() {
     */
   }, [dispatch])
 
+  /*
+    accessToken 만료시 자동으로 refresh
+  */
   useEffect(() => {
     axios.interceptors.response.use(
       response => {
