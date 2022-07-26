@@ -27,7 +27,7 @@
       reducer : action이 실행되면 state를 바꾸는 로직 (reducer와 action은 짝을 이룬다.)
     
 */
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // initialState는 모든 컴포넌트들이 자유롭게 공유할 수 있는 global(전역) state이다.
 // 초기 상태(state)
@@ -35,6 +35,7 @@ const initialState = {
   name: '',
   email: '',
   accessToken: '',
+  money: 0,
 }
 
 const userSlice = createSlice({
@@ -52,6 +53,9 @@ const userSlice = createSlice({
     // 만약 accessToken 관련 state만 바꾸고 싶다면 setAccessToken(){}으로 아래와 같이 작성할 수 있다.
     setAccessToken(state, action) {
       state.accessToken = action.payload
+    },
+    setMoney(state, action: PayloadAction<number>) {
+      state.money = action.payload
     },
   },
   // extraReducers에는 비동기 action
