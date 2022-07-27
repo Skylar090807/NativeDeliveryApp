@@ -1,4 +1,4 @@
-package com.nativedeliveryapp.newarchitecture.components;
+package com.skylar.nativedeliveryapp.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
