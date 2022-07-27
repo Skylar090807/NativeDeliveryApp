@@ -1,4 +1,11 @@
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import React, { useCallback, useState } from 'react'
 import orderSlice, { Order } from '../slices/order'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
@@ -16,8 +23,15 @@ function EachOrder({ item }: Props) {
   const navigation = useNavigation<NavigationProp<LoggedInParamList>>()
   const dispatch = useAppDispatch()
   const accessToken = useSelector((state: RootState) => state.user.accessToken)
+
+  const [loading, setLoading] = useState(false)
+  // toggleDetail
   const [detail, showDetail] = useState(false)
 
+  /*
+    주문 수락의 경우 서버와 통신하여 수락을 알려야 한다.
+    내가 수락한 주문을 타인이 수락하거나, 타인이 수락한 주문을 내가 수락하면 안 되기 때문이다.
+  */
   const onAccept = useCallback(async () => {
     if (!accessToken) {
       return
@@ -29,6 +43,8 @@ function EachOrder({ item }: Props) {
         { headers: { authorization: `Bearer ${accessToken}` } },
       )
       dispatch(orderSlice.actions.acceptOrder(item.orderId))
+      //다른 컴포넌트로 이동 시 현재 컴포넌트가 unMount 되므로, 이동 전에 loading state를 바꾼다. (native는 언마운트 되지 않지만 다른 경우 신경써야 한다.)
+      setLoading(true)
       navigation.navigate('Delivery')
     } catch (error) {
       let errorResponse = (error as AxiosError).response
@@ -37,6 +53,7 @@ function EachOrder({ item }: Props) {
         Alert.alert('알림', (errorResponse.data as any).message)
         dispatch(orderSlice.actions.rejectOrder(item.orderId))
       }
+      setLoading(false)
     }
   }, [navigation, dispatch, item, accessToken])
 
@@ -71,10 +88,22 @@ function EachOrder({ item }: Props) {
             <Text style={styles.mapText}>Naver Map Place</Text>
           </View>
           <View style={styles.buttonWrapper}>
-            <Pressable onPress={onAccept} style={styles.acceptButton}>
-              <Text style={styles.buttonText}>수락</Text>
+            <Pressable
+              onPress={onAccept}
+              disabled={loading}
+              style={styles.acceptButton}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>수락</Text>
+              )}
             </Pressable>
-            <Pressable onPress={onReject} style={styles.rejectButton}>
+            <Pressable
+              onPress={onReject}
+              // disabled={loading}
+              style={styles.rejectButton}
+            >
               <Text style={styles.buttonText}>거절</Text>
             </Pressable>
           </View>

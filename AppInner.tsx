@@ -143,6 +143,11 @@ function AppInner() {
 
   /*
     accessToken 만료시 자동으로 refresh
+      axios.interceptors.response.use() 사용
+      첫번째 함수는 response 처리
+      두번째 함수는 error 처리
+      - param으로 받아오는 error는 error.response.status 형태다. 구조분해할당으로 typing한다.
+    
   */
   useEffect(() => {
     axios.interceptors.response.use(
@@ -171,6 +176,7 @@ function AppInner() {
             return axios(originalRequest)
           }
         }
+        // 419 error 외 다른 에러 처리
         return Promise.reject(error)
       },
     )
