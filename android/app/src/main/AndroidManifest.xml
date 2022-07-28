@@ -13,9 +13,9 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <!-- naver map  CLIENT_ID -->
-      <!-- <meta-data
+      <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="c5i0qvf959" /> -->
+            android:value="azznp1vhsm" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
