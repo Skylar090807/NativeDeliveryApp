@@ -1,4 +1,4 @@
-package com.skylar.nativedeliveryapp;
+package com.nativedeliveryapp;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
