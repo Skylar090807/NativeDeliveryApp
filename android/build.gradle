@@ -54,6 +54,6 @@ allprojects {
         google()
         maven { url 'https://www.jitpack.io' }
         // Could not find com.naver.maps:map-sdk:3.12.0. error 때문에 추가.
-        // maven { url 'https://maven.google.com' }
+        maven { url 'https://maven.google.com' }
     }
 }
