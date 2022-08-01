@@ -20,7 +20,7 @@ function Settings() {
   useEffect(() => {
     async function getMoney() {
       const response = await axios.get<{ data: number }>(
-        'http://10.0.2.2:3105//showmethemoney',
+        'http://127.0.0.1:3105//showmethemoney',
         {
           headers: { authorization: `Bearer ${accessToken}` },
         },
@@ -42,7 +42,7 @@ function Settings() {
     try {
       // Axios server 통신
       await axios.post(
-        'http://10.0.2.2:3105/logout',
+        'http://127.0.0.1:3105/logout',
         {},
         {
           headers: {

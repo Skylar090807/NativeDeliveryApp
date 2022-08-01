@@ -52,7 +52,7 @@ function SignIn({ navigation }: SignInScreenProps) {
     //  Axios API 서버 호출
     try {
       setLoading(true)
-      const response = await axios.post('http://10.0.2.2:3105/login', {
+      const response = await axios.post('http://127.0.0.1:3105/login', {
         email,
         password,
       })
@@ -95,7 +95,7 @@ function SignIn({ navigation }: SignInScreenProps) {
     } finally {
       setLoading(false)
     }
-  }, [loading, dispatch, email, password])
+  }, [dispatch, email, password])
 
   const toSignUp = useCallback(() => {
     navigation.navigate('SignUp')

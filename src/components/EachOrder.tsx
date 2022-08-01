@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   Pressable,
   StyleSheet,
   Text,
@@ -15,6 +16,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../store/reducer'
 import axios, { AxiosError } from 'axios'
 import getDistanceFromLatLonInKm from '../util'
+import NaverMapView, { Marker, Path } from 'react-native-nmap'
 
 interface Props {
   item: Order
@@ -38,7 +40,7 @@ function EachOrder({ item }: Props) {
     }
     try {
       await axios.post(
-        'http://10.0.2.2:3105/accept',
+        'http://127.0.0.1:3105/accept',
         { orderId: item.orderId },
         { headers: { authorization: `Bearer ${accessToken}` } },
       )
@@ -85,7 +87,39 @@ function EachOrder({ item }: Props) {
       {detail && (
         <View>
           <View style={styles.mapWrapper}>
-            <Text style={styles.mapText}>Naver Map Place</Text>
+            <NaverMapView
+              style={{ width: '100%', height: '100%' }}
+              zoomControl={false}
+              center={{
+                zoom: 10,
+                tilt: 50,
+                latitude: (start.latitude + end.latitude) / 2,
+                longitude: (start.longitude + end.longitude) / 2,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: start.latitude,
+                  longitude: start.longitude,
+                }}
+                pinColor="blue"
+              />
+              <Path
+                coordinates={[
+                  {
+                    latitude: start.latitude,
+                    longitude: start.longitude,
+                  },
+                  { latitude: end.latitude, longitude: end.longitude },
+                ]}
+              />
+              <Marker
+                coordinate={{
+                  latitude: end.latitude,
+                  longitude: end.longitude,
+                }}
+              />
+            </NaverMapView>
           </View>
           <View style={styles.buttonWrapper}>
             <Pressable
@@ -129,9 +163,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   mapWrapper: {
+    width: Dimensions.get('window').width - 30,
+    height: 200,
+    marginTop: 10,
     marginBottom: 10,
   },
-  mapText: {},
   buttonWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',

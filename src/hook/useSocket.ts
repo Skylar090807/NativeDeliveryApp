@@ -29,7 +29,7 @@ const useSocket = (): [typeof socket, () => void] => {
         'long-polling' 방식을 사용하지 않으려고 작성하지 않았다. 만일 long-polling 방법을 사용하려면 아래와 같이 작성한다.
           transports: ['long-polling', 'websocket'], 
     */
-    socket = io('http://10.0.2.2:3105', {
+    socket = io('http://127.0.0.1:3105', {
       transports: ['websocket'],
       // path: 'socket-io', 에러의 원인이 되므로 주석처리
       // path: 'socket-io',

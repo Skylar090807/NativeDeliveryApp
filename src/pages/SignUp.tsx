@@ -88,7 +88,7 @@ function SignUp({ navigation }: SignUpScreenProps) {
         // 'localhost:3105/user',
         // '내아이피/user',
         // 10.0.2.2 android emulator 내부 주소, iOS는 localhost:3105
-        'http://10.0.2.2:3105/user',
+        'http://127.0.0.1:3105/user',
         {
           email,
           password, // hash화, 비밀번호는 보통 일방향 암호화. 암호화는 가능하지만 복호화는 불가능하다.
