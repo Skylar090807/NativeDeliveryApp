@@ -89,7 +89,11 @@ function EachOrder({ item }: Props) {
           <View style={styles.mapWrapper}>
             <NaverMapView
               style={{ width: '100%', height: '100%' }}
-              zoomControl={false}
+              zoomControl={true}
+              /*
+                center options
+
+              */
               center={{
                 zoom: 10,
                 tilt: 50,
@@ -98,6 +102,7 @@ function EachOrder({ item }: Props) {
               }}
             >
               <Marker
+                // 출발 지점 마커
                 coordinate={{
                   latitude: start.latitude,
                   longitude: start.longitude,
@@ -106,14 +111,12 @@ function EachOrder({ item }: Props) {
               />
               <Path
                 coordinates={[
-                  {
-                    latitude: start.latitude,
-                    longitude: start.longitude,
-                  },
+                  { latitude: start.latitude, longitude: start.longitude },
                   { latitude: end.latitude, longitude: end.longitude },
                 ]}
               />
               <Marker
+                // 도착 지점 마커
                 coordinate={{
                   latitude: end.latitude,
                   longitude: end.longitude,
