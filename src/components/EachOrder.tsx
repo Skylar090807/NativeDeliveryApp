@@ -89,14 +89,15 @@ function EachOrder({ item }: Props) {
           <View style={styles.mapWrapper}>
             <NaverMapView
               style={{ width: '100%', height: '100%' }}
-              zoomControl={true}
+              zoomControl={true} // zoom을 위한 +, - 버튼
               /*
                 center options
-
+                  zoom: 숫자가 클 수록 zoom
+                  tilt: 숫자가 클 수록 지도가 눕는다
               */
               center={{
                 zoom: 10,
-                tilt: 50,
+                tilt: 20,
                 latitude: (start.latitude + end.latitude) / 2,
                 longitude: (start.longitude + end.longitude) / 2,
               }}
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   mapWrapper: {
-    width: Dimensions.get('window').width - 30,
+    width: Dimensions.get('window').width - 60,
     height: 200,
     marginTop: 10,
     marginBottom: 10,
