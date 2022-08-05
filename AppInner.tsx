@@ -18,6 +18,7 @@ import { useAppDispatch } from './src/store'
 import userSlice from './src/slices/user'
 import { Alert } from 'react-native'
 import orderSlice from './src/slices/order'
+import usePermissions from './src/hook/usePermissions'
 
 /* 
   TypeScript에서 React Navigation을 사용하려면 아래와 같이 Type Check를 해야 한다.
@@ -66,7 +67,9 @@ function AppInner() {
  */
   const [socket, disconnect] = useSocket()
 
-  //Socket.IO helloCallback으로 emit, on, off 연습해보기
+  usePermissions()
+
+  //Socket.IO
   useEffect(() => {
     // server로 부터 데이터를 받는 것은 callback 방식으로 처리를 해야 한다.
     const callback = (data: any) => {
