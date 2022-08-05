@@ -10,6 +10,7 @@ import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions'
 // Linking.openURL('https://google.com')
 // Linking.openURL('tel://01012345678')
 // Linking.openURL('sms://01012345678')
+// Linking.openURL('mailto://skylar@email.com')
 // Linking.openURL('upbitex://account') //업비트 어카운트 연결
 
 function usePermissions() {
@@ -47,7 +48,6 @@ function usePermissions() {
         .catch(console.error)
       /*
         ios 위치 권한
-
       */
     } else if (Platform.OS === 'ios') {
       check(PERMISSIONS.IOS.LOCATION_ALWAYS)
@@ -73,7 +73,7 @@ function usePermissions() {
         .catch(console.error)
     }
 
-    // Camera 권한
+    // android Camera 권한
     if (Platform.OS === 'android') {
       check(PERMISSIONS.ANDROID.CAMERA)
         .then(result => {
@@ -86,7 +86,9 @@ function usePermissions() {
           }
         })
         .catch(console.error)
-    } else if (Platform.OS === 'ios') {
+    }
+    // iOS Camera 권한
+    else if (Platform.OS === 'ios') {
       check(PERMISSIONS.IOS.CAMERA)
         .then(result => {
           if (
