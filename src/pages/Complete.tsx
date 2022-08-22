@@ -29,11 +29,15 @@ import orderSlice from '../slices/order'
   react-natvie 에선 react-native-image-resizer로, 웹에서는 canvas로 resizing 해준다.
 */
 
+/*
+  {uri: 'path', filename: 'filename', type: '확장자'}
+  multipart/form-data 통해서 이미지 업로드
+*/
 function Complete() {
   const dispatch = useAppDispatch()
 
   /*
-    React-Native hook useRoute(), useNavigation()
+    React-Navigation hook useRoute(), useNavigation()
       function Complete({navigation, route}: typing) {} 한 것과 크게 다르지 않다.
     parent screen prop인 navigation과 route를 hook으로 빼면 아래와 같이 쓸 수 있다.
 
@@ -147,7 +151,7 @@ function Complete() {
   }, [dispatch, navigation, image, orderId, accessToken])
 
   return (
-    <View>
+    <View style={styles.completeWrapper}>
       <View style={styles.orderId}>
         <Text>주문번호: {orderId}</Text>
       </View>
@@ -177,6 +181,10 @@ function Complete() {
 }
 
 const styles = StyleSheet.create({
+  completeWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   orderId: {
     padding: 20,
   },
